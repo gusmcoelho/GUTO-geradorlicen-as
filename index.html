@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUTO — Gerador de Licenças</title>
+    <!-- Fontes Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Folha de estilo customizada -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glow-container">
+        <div class="glow-orb orb-primary"></div>
+        <div class="glow-orb orb-secondary"></div>
+    </div>
+
+
+
+    <div class="dashboard-wrapper-simple">
+        <!-- Cabeçalho Principal -->
+        <header class="main-header">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved brand-icon"></i>
+                <h1>GUTO <span>Manager</span></h1>
+            </div>
+            <div class="header-actions">
+                <span class="connection-indicator disconnected" id="connectionIndicator">
+                    <i class="fa-solid fa-circle"></i> Desconectado
+                </span>
+                <button id="toggleConfigBtn" class="btn btn-icon-only" title="Configurar Conexão">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Bloco de Configurações do Supabase (Colapsável) -->
+        <section id="supabaseConfigCard" class="glass-panel config-panel collapsed">
+            <div class="config-panel-header">
+                <h3><i class="fa-solid fa-gears icon"></i> Configuração Supabase</h3>
+                <p class="description">Inserções salvas localmente no seu navegador para total segurança.</p>
+            </div>
+            
+            <div class="config-grid">
+                <div class="form-group">
+                    <label for="supabaseUrl">Supabase Project URL</label>
+                    <input type="text" id="supabaseUrl" placeholder="https://xxxx.supabase.co" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="supabaseKey">Service Role Key</label>
+                    <div class="input-password-wrapper">
+                        <input type="password" id="supabaseKey" placeholder="sbp_xxxx..." autocomplete="off">
+                        <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility()"><i class="fa-solid fa-eye" id="passwordEye"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-actions">
+                <button id="saveConfigBtn" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar Conexão</button>
+                <div id="configStatus" class="status-alert hidden"></div>
+            </div>
+        </section>
+
+        <!-- Bloco do Gerador de Chaves (Horizontal e Compacto) -->
+        <section class="glass-panel generator-panel">
+            <div class="generator-row">
+                <div class="form-group-compact">
+                    <label for="keyPrefix">Prefixo</label>
+                    <input type="text" id="keyPrefix" value="GUTO" placeholder="Ex: GUTO">
+                </div>
+
+                <div class="form-group-compact flex-grow">
+                    <label for="keyDuration">Duração da Licença</label>
+                    <select id="keyDuration">
+                        <option value="5min">5 Minutos (Testes)</option>
+                        <option value="1day">1 Dia</option>
+                        <option value="1week">1 Semana</option>
+                        <option value="1month">1 Mês</option>
+                        <option value="infinite" selected>Vitalícia (Infinita)</option>
+                    </select>
+                </div>
+
+                <div class="form-group-compact">
+                    <label for="keyQuantity">Quantidade</label>
+                    <input type="number" id="keyQuantity" min="1" max="50" value="1">
+                </div>
+
+                <button id="generateKeysBtn" class="btn btn-secondary btn-generate" disabled>
+                    <i class="fa-solid fa-plus-circle"></i> Gerar Licenças
+                </button>
+            </div>
+        </section>
+
+        <!-- Tabela de Chaves -->
+        <section class="glass-panel table-panel">
+            <div class="table-header-simple">
+                <div class="table-title-row">
+                    <h2>Gerenciar Chaves</h2>
+                    <div class="stats-summary" id="statsSummary">Configure o Supabase para carregar estatísticas.</div>
+                </div>
+                
+                <div class="table-actions-row">
+                    <div class="search-input">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="tableSearch" placeholder="Buscar chave...">
+                    </div>
+                    
+                    <div class="filter-tabs-simple">
+                        <button class="tab-btn active" data-filter="all">Todas</button>
+                        <button class="tab-btn" data-filter="active">Ativas</button>
+                        <button class="tab-btn" data-filter="used">Em Uso</button>
+                        <button class="tab-btn" data-filter="expired">Expiradas</button>
+                        <button class="tab-btn" data-filter="revoked">Revogadas</button>
+                    </div>
+
+                    <button id="refreshBtn" class="btn btn-icon-only" title="Recarregar"><i class="fa-solid fa-rotate"></i></button>
+                </div>
+            </div>
+
+            <!-- Tabela Real -->
+            <div class="table-responsive">
+                <table class="keys-table-simple">
+                    <thead>
+                        <tr>
+                            <th>Chave</th>
+                            <th>Expiração</th>
+                            <th>Dispositivo</th>
+                            <th class="text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keysTableBody">
+                        <tr>
+                            <td colspan="4" class="text-center placeholder-row">Configure o Supabase no menu superior para começar.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="toast hidden">
+        <i class="fa-solid fa-info-circle toast-icon"></i>
+        <span class="toast-message">Mensagem</span>
+    </div>
+
+    <!-- SDK do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Script Principal -->
+    <script src="app.js"></script>
+</body>
+</html>
